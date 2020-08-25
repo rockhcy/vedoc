@@ -1,0 +1,27 @@
+server:
+  port: 10002
+spring:
+  profiles:
+    active: dev
+  application:
+    name: versionControl
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 3.14
+    url: jdbc:mysql://localhost:3306/vedoc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 50MB #设置单次文件上传的最大值
+      max-request-size: 50MB #设置单次请求的最大值
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss #自动将modelAndview中的data数据转换为字符串传递给前端
+    time-zone: GMT+8
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mappers/*Mapper.xml
+logging:
+  config: classpath:config/logback-spring.xml
+
+gitRootPath: D:/versionTest/ #系统根路径
