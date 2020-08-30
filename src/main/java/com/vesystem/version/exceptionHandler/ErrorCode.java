@@ -1,4 +1,4 @@
-package com.vesystem.version.exceptionConfig;
+package com.vesystem.version.exceptionHandler;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.vesystem.version.exceptionConfig;
+package com.vesystem.version.exceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

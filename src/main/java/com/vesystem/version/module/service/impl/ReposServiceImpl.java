@@ -2,15 +2,13 @@ package com.vesystem.version.module.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vesystem.version.constants.PathConstant;
-import com.vesystem.version.exceptionConfig.ErrorCode;
-import com.vesystem.version.exceptionConfig.ParameterInvalid;
+import com.vesystem.version.exceptionHandler.ErrorCode;
+import com.vesystem.version.exceptionHandler.ParameterInvalid;
 import com.vesystem.version.module.dao.MappingRepoUserMapper;
-import com.vesystem.version.module.dao.MappingUserApiMapper;
 import com.vesystem.version.module.dao.ReposShareMapper;
 import com.vesystem.version.module.dto.ReposDto;
 import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.entity.MappingRepoUser;
-import com.vesystem.version.module.entity.MappingUserApi;
 import com.vesystem.version.module.entity.Repos;
 import com.vesystem.version.module.dao.ReposMapper;
 import com.vesystem.version.module.entity.ReposShare;
@@ -65,8 +63,8 @@ public class ReposServiceImpl extends ServiceImpl<ReposMapper, Repos> implements
         reposMapper.updateRepoPath(reposDto.getRepoPath(),reposDto.getRepoId());
     }
 
-    public void addMappingRepo(HttpServletRequest request,Integer id,String password){
-        ReposShare rs= reposShareMapper.selectById(id);
+    public void addMappingRepo(HttpServletRequest request,Integer shareId,String password){
+        ReposShare rs= reposShareMapper.selectById(shareId);
         if (rs ==null){
             throw new ParameterInvalid(ErrorCode.METHOD_ARGUMENT_NOT_VALID);
         }

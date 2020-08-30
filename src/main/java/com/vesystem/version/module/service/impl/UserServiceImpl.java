@@ -1,20 +1,23 @@
 package com.vesystem.version.module.service.impl;
 
-import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vesystem.version.constants.PathConstant;
-import com.vesystem.version.exceptionConfig.ErrorCode;
-import com.vesystem.version.exceptionConfig.ParameterInvalid;
+import com.vesystem.version.exceptionHandler.ErrorCode;
+import com.vesystem.version.exceptionHandler.ParameterInvalid;
 import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.entity.User;
 import com.vesystem.version.module.dao.UserMapper;
 import com.vesystem.version.module.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.vesystem.version.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * <p>
@@ -60,5 +63,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return (UserDto) dbUser;
     }
+
+    public JSONObject userLogin(String username,String password){
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.eq("username",username);
+        User u = userMapper.selectOne(qw);
+        if ( u ==null ){
+            throw new ParameterInvalid(ErrorCode.ACCOUNT_PASSWORD_ERROR);
+        }
+        if ( !Objects.equals(u.getPassword(), password ) ){
+            throw new ParameterInvalid(ErrorCode.ACCOUNT_PASSWORD_ERROR);
+        }
+        String token = JwtToken.createToken(u.getUsername(),u.getRoleId(),u.getAlias(),u.getUserId());
+        JSONObject json =new JSONObject();
+        json.put("token",token);
+        return json;
+    }
+    public JSONObject refreshToken(HttpServletRequest request){
+        String token =JwtToken.refreshToken(request);
+        JSONObject json =new JSONObject();
+        json.put("token",token);
+        return json;
+    }
+
+
 
 }

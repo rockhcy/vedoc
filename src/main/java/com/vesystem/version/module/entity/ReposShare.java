@@ -24,8 +24,8 @@ public class ReposShare implements Serializable {
     /**
      * 仓库分享表
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "id")
+    private Integer shareId;
 
     /**
      * 仓库id

@@ -26,7 +26,9 @@ public class Repos implements Serializable {
      */
     @TableId(value = "repo_id", type = IdType.AUTO)
     private Integer repoId;
-
+    /**
+     * 仓库名称
+     */
     private String repoName;
 
     /**

@@ -1,5 +1,7 @@
 package com.vesystem.version.util;
 
+import com.vesystem.version.exceptionHandler.ErrorCode;
+import com.vesystem.version.exceptionHandler.ParameterInvalid;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,7 +9,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public class JwtToken {
     /**
      * JWT签名密钥
      */
-    public static final String JWT_SECRET_KEY = "hcy";
+    public static final String JWT_SECRET_KEY = "C*F-JaNdRgUkXn2r5u8x/A?D(G+KbPeShVmYq3s6v9y$B&E)H@McQfTjWnZr4u7w";
 
     /**
      * 角色的key
@@ -46,15 +47,15 @@ public class JwtToken {
     /**
      * 构建令牌
      * @param username
-     * @param roles
-     * @param userName
+     * @param roleId
+     * @param alias
      * @param userId
      * @return
      */
-    public static String createToken(String username, List<String> roles,String userName,Integer userId) {
+    public static String createToken(String username, Integer roleId,String alias,Integer userId) {
         Map<String,Object> map = new HashMap<>(4);
-        map.put(KEY_USER_NAME,userName);
-        map.put(KEY_ROLE_ID, String.join(",", roles));
+        map.put(KEY_USER_NAME,alias);
+        map.put(KEY_ROLE_ID, roleId);
         map.put(KEY_USER_ID,userId);
         final Date createdDate = new Date();
         final Date expirationDate = new Date(createdDate.getTime() + EXPIRATION * 1000);
@@ -79,6 +80,21 @@ public class JwtToken {
         return System.currentTimeMillis() > (expiredDate.getTime()- REFRESH_TIME * 1000);
     }
 
+    /**
+     * 刷新令牌
+     * @param request
+     * @return
+     */
+    public static String refreshToken(HttpServletRequest request){
+        try {
+            String token = request.getHeader(TOKEN_HEADER).replace(TOKEN_PREFIX,"");
+            Claims claims = getTokenBody(token);
+            return createToken(claims.getSubject(),Integer.valueOf(claims.get("KEY_ROLE_ID").toString()),
+                    claims.get("KEY_USER_NAME").toString(),Integer.valueOf(claims.get("KEY_USER_ID").toString()));
+        }catch (Exception e){
+            throw new ParameterInvalid(ErrorCode.VERIFY_JWT_FAILED);
+        }
+    }
     /**
      * 令牌是否过期
      * @param token
