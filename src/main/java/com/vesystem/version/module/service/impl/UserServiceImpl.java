@@ -7,9 +7,10 @@ import com.vesystem.version.exceptionHandler.ErrorCode;
 import com.vesystem.version.exceptionHandler.ParameterInvalid;
 import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.entity.User;
-import com.vesystem.version.module.dao.UserMapper;
+import com.vesystem.version.module.mapper.UserMapper;
 import com.vesystem.version.module.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.vesystem.version.util.CurrentUserUtils;
 import com.vesystem.version.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -33,14 +35,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserMapper userMapper;
     @Value("${gitRootPath}")
     private String gitRootPath;
+    @Autowired
+    private CurrentUserUtils currentUserUtils;
 
-    public void addUser(UserDto userDto){
+    public void addUser(HttpServletRequest request,UserDto userDto){
         QueryWrapper<User> qw = new QueryWrapper<>();
         qw.eq("username",userDto.getUsername());
         User dbUser = userMapper.selectOne(qw);
         if ( dbUser !=null ){
             throw new ParameterInvalid(ErrorCode.USER_NAME_ALREADY_EXIST);
         }
+        userDto.setCreater( currentUserUtils.getCurrentUser(request).getUsername() );
+        userDto.setCreateTime( new Date());
         userMapper.insert(userDto);
         File file = new File(gitRootPath+ PathConstant.USER_TEMP_FOLDER_REATIVE_PATH + userDto.getUserId() + "/");
         file.mkdirs();

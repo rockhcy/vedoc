@@ -11,9 +11,9 @@ import org.springframework.web.filter.CorsFilter;
  * @create 2020-08-29 18:11
  * @Description
  */
-@Configuration
+//@Configuration
 public class CorsConfig {
-    @Bean
+    //@Bean
     public CorsFilter corsFilter(){
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", buildConfig());

@@ -1,6 +1,6 @@
-package com.vesystem.version.module.dao;
+package com.vesystem.version.module.mapper;
 
-import com.vesystem.version.module.entity.SysRole;
+import com.vesystem.version.module.entity.MappingGroupUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @since 2020-08-24
  */
 @Repository
-public interface SysRoleMapper extends BaseMapper<SysRole> {
+public interface MappingGroupUserMapper extends BaseMapper<MappingGroupUser> {
 
 }

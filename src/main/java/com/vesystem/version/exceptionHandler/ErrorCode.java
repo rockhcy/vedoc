@@ -22,9 +22,13 @@ public enum ErrorCode {
     INIT_REPOS_ERROR(1010, HttpStatus.INSUFFICIENT_STORAGE, "初始化本版仓库时发生错误"),
     REPO_NOT_EXIST(1011, HttpStatus.INSUFFICIENT_STORAGE, "仓库不存在"),
     REPO_SHARE_PASSWORD_ERROR(1012, HttpStatus.INSUFFICIENT_STORAGE, "仓库的分享密码错误"),
+    PATH_NOT_EXIST(1013, HttpStatus.INSUFFICIENT_STORAGE, "文件路径不存在"),
+    INVALID_PATH(1014, HttpStatus.INSUFFICIENT_STORAGE, "不是一个有效的root路径"),
+    FILE_LOCKING(1015, HttpStatus.INSUFFICIENT_STORAGE, "文件锁定中，请稍后再试"),
+    PLEASE_USE_MULTIPART_UPLOAD(1016, HttpStatus.INSUFFICIENT_STORAGE, "请使用文件分片上传"),
     ;
 
-    ;
+
 
 
     private final int code;

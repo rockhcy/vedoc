@@ -1,7 +1,7 @@
 package com.vesystem.version.module.service.impl;
 
 import com.vesystem.version.module.entity.ReposShare;
-import com.vesystem.version.module.dao.ReposShareMapper;
+import com.vesystem.version.module.mapper.ReposShareMapper;
 import com.vesystem.version.module.service.IReposShareService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

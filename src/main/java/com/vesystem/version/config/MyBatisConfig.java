@@ -15,7 +15,7 @@ import java.util.Properties;
  * @Description
  */
 @Configuration
-@MapperScan("com.vesystem.version.module.dao")
+@MapperScan("com.vesystem.version.module.mapper")
 public class MyBatisConfig {
 
     @Bean

@@ -22,14 +22,14 @@ public class FrontInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String authHeader = request.getHeader(JwtToken.TOKEN_HEADER);
-        if ( authHeader == null ){
-            throw new ParameterInvalid(ErrorCode.VERIFY_JWT_FAILED);
-        }
-        if ( JwtToken.isTokenExpired(authHeader.replace(JwtToken.TOKEN_PREFIX,"")) ){
-            //令牌过期，退出登陆。刷新令牌由前端自己在请求前置拦截器中处理
-            throw new ParameterInvalid(ErrorCode.TOKEN_EXPIRED);
-        }
+//        String authHeader = request.getHeader(JwtToken.TOKEN_HEADER);
+//        if ( authHeader == null ){
+//            throw new ParameterInvalid(ErrorCode.VERIFY_JWT_FAILED);
+//        }
+//        if ( JwtToken.isTokenExpired(authHeader.replace(JwtToken.TOKEN_PREFIX,"")) ){
+//            //令牌过期，退出登陆。刷新令牌由前端自己在请求前置拦截器中处理
+//            throw new ParameterInvalid(ErrorCode.TOKEN_EXPIRED);
+//        }
         return true;
     }
 

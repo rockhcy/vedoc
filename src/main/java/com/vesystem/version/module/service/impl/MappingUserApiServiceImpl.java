@@ -1,7 +1,7 @@
 package com.vesystem.version.module.service.impl;
 
 import com.vesystem.version.module.entity.MappingUserApi;
-import com.vesystem.version.module.dao.MappingUserApiMapper;
+import com.vesystem.version.module.mapper.MappingUserApiMapper;
 import com.vesystem.version.module.service.IMappingUserApiService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

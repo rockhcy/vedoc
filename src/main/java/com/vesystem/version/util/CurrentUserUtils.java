@@ -1,11 +1,9 @@
 package com.vesystem.version.util;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.vesystem.version.module.dao.SysRoleMapper;
-import com.vesystem.version.module.dao.UserMapper;
+import com.vesystem.version.module.mapper.SysRoleMapper;
+import com.vesystem.version.module.mapper.UserMapper;
 import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.entity.SysRole;
-import com.vesystem.version.module.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,11 +31,8 @@ public class CurrentUserUtils {
      * @return
      */
     public UserDto getCurrentUser(HttpServletRequest request){
-        String token = request.getHeader(JwtToken.TOKEN_HEADER);
-        String userName = JwtToken.getUsernameByToken(token);
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.eq("username",userName);
-        UserDto u= (UserDto) userMapper.selectOne(qw);
+        String userName = JwtToken.getUsernameByRequest(request);
+        UserDto u = userMapper.selectUserDetilsByUsername(userName);
         SysRole role= sysRoleMapper.selectById(u.getRoleId());
         u.setSysRole(role);
         return u;

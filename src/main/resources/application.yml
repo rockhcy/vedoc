@@ -1,5 +1,5 @@
 server:
-  port: 10002
+  port: 9999
 spring:
   profiles:
     active: dev
@@ -25,3 +25,6 @@ logging:
   config: classpath:config/logback-spring.xml
 
 gitRootPath: D:/versionTest/ #系统根路径
+deleteFolderWhenDeleteRepo: true #删除仓库时是否要同步删除用户文件，false为不删除，由服务器管理员自己去做物理删除
+openFileSecondPass: true # 是否开启文件秒传，true开启
+

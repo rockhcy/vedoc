@@ -1,7 +1,9 @@
-package com.vesystem.version.module.dao;
+package com.vesystem.version.module.mapper;
 
+import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,5 +16,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserMapper extends BaseMapper<User> {
+
+    @Select(" SELECT * FROM `user` WHERE username = #{username} ")
+    UserDto selectUserDetilsByUsername(String username);
 
 }

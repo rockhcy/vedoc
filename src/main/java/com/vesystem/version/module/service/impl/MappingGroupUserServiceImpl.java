@@ -1,7 +1,7 @@
 package com.vesystem.version.module.service.impl;
 
 import com.vesystem.version.module.entity.MappingGroupUser;
-import com.vesystem.version.module.dao.MappingGroupUserMapper;
+import com.vesystem.version.module.mapper.MappingGroupUserMapper;
 import com.vesystem.version.module.service.IMappingGroupUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

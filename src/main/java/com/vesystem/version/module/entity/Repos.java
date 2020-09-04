@@ -1,9 +1,13 @@
 package com.vesystem.version.module.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+
+import java.beans.Transient;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

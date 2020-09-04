@@ -1,7 +1,7 @@
 package com.vesystem.version.module.service.impl;
 
 import com.vesystem.version.module.entity.MappingRoleApi;
-import com.vesystem.version.module.dao.MappingRoleApiMapper;
+import com.vesystem.version.module.mapper.MappingRoleApiMapper;
 import com.vesystem.version.module.service.IMappingRoleApiService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

@@ -3,8 +3,11 @@ package com.vesystem.version.util;
 import com.vesystem.version.exceptionHandler.ErrorCode;
 import com.vesystem.version.exceptionHandler.ParameterInvalid;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -18,13 +21,16 @@ import java.util.Map;
  */
 public class JwtToken {
 
+    private static Logger log = LoggerFactory.getLogger(JwtToken.class);
+
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE = "JWT";
     /**
      * JWT签名密钥
+     * 密钥长度必须在 4位以上，否则创建令牌时提示：java.lang.IllegalArgumentException: A signing key must be specified if the specified JWT is digitally signed.
      */
-    public static final String JWT_SECRET_KEY = "C*F-JaNdRgUkXn2r5u8x/A?D(G+KbPeShVmYq3s6v9y$B&E)H@McQfTjWnZr4u7w";
+    public static final String JWT_SECRET_KEY = "hechongyang";
 
     /**
      * 角色的key
@@ -35,9 +41,9 @@ public class JwtToken {
 
     /**
      * REFRESH_TIME 令牌刷新时间
-     * 30分钟
+     * 30分钟  1800L
      */
-    public static final long REFRESH_TIME = 1800L;
+    public static final long REFRESH_TIME = 18000L;
     /**
      * 令牌过期时间
      * 60分钟
@@ -60,7 +66,8 @@ public class JwtToken {
         final Date createdDate = new Date();
         final Date expirationDate = new Date(createdDate.getTime() + EXPIRATION * 1000);
         String tokenPrefix = Jwts.builder()
-                .signWith( SignatureAlgorithm.HS256,JWT_SECRET_KEY)
+                // SignatureAlgorithm.HS512
+                .signWith( SignatureAlgorithm.HS256, JWT_SECRET_KEY )
                 .setHeaderParam("type", TOKEN_TYPE)
                 .setClaims(map)
                 .setIssuer("HCY")
@@ -89,30 +96,53 @@ public class JwtToken {
         try {
             String token = request.getHeader(TOKEN_HEADER).replace(TOKEN_PREFIX,"");
             Claims claims = getTokenBody(token);
-            return createToken(claims.getSubject(),Integer.valueOf(claims.get("KEY_ROLE_ID").toString()),
-                    claims.get("KEY_USER_NAME").toString(),Integer.valueOf(claims.get("KEY_USER_ID").toString()));
+            return createToken(claims.getSubject(),Integer.valueOf(claims.get( KEY_ROLE_ID ).toString()),
+                    claims.get( KEY_USER_NAME ).toString(),Integer.valueOf(claims.get( KEY_USER_ID ).toString()));
         }catch (Exception e){
+            log.error("refreshToken err",e);
             throw new ParameterInvalid(ErrorCode.VERIFY_JWT_FAILED);
         }
     }
     /**
      * 令牌是否过期
      * @param token
-     * @return
+     * @return true=过期，false=未过期
      */
     public static boolean isTokenExpired(String token) {
         Date expiredDate = getTokenBody(token).getExpiration();
         return expiredDate.before(new Date());
     }
 
-    public static String getUsernameByToken(String token) {
+    /**
+     *  从HttpServletRequest中获取用户id
+     * @param request
+     * @return
+     */
+    public static Integer getUserIdByRequest(HttpServletRequest request){
+        String token = request.getHeader(TOKEN_HEADER).replace(TOKEN_PREFIX,"");
+        Claims claims = getTokenBody(token);
+        return Integer.valueOf( claims.get(KEY_USER_ID).toString() );
+    }
+    /**
+     *  从HttpServletRequest中获取用户id
+     * @param request
+     * @return
+     */
+    public static String getUsernameByRequest(HttpServletRequest request){
+        String token = request.getHeader(TOKEN_HEADER).replace(TOKEN_PREFIX,"");
         return getTokenBody(token).getSubject();
     }
+
     private static Claims getTokenBody(String token) {
-        return Jwts.parser()
-                .setSigningKey(JWT_SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey( JWT_SECRET_KEY )
+                    .parseClaimsJws(token)
+                    .getBody();
+        }catch (ExpiredJwtException e){
+            log.error("getTokenBody err",e);
+            throw new ParameterInvalid(ErrorCode.VERIFY_JWT_FAILED);
+        }
     }
 
 

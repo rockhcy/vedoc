@@ -16,6 +16,22 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`vedoc` /*!40100 DEFAULT CHARACTER SET u
 
 USE `vedoc`;
 
+/*Table structure for table `doc_lock` */
+
+DROP TABLE IF EXISTS `doc_lock`;
+
+CREATE TABLE `doc_lock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文件锁表',
+  `type` tinyint(4) DEFAULT NULL COMMENT '1-文件锁，2-目录锁',
+  `path` varchar(600) DEFAULT NULL COMMENT '文件或者目录的物理路径',
+  `state` tinyint(4) DEFAULT NULL COMMENT '锁状态，0-无锁，1-锁文件，2-锁目录',
+  `locker` varchar(100) DEFAULT NULL COMMENT '加锁人',
+  `lock_time` bigint(20) DEFAULT NULL COMMENT '锁定时间，当操过该时间后自动解锁',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+/*Data for the table `doc_lock` */
+
 /*Table structure for table `doc_share` */
 
 DROP TABLE IF EXISTS `doc_share`;
@@ -33,6 +49,20 @@ CREATE TABLE `doc_share` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `doc_share` */
+
+/*Table structure for table `file_fingerprint` */
+
+DROP TABLE IF EXISTS `file_fingerprint`;
+
+CREATE TABLE `file_fingerprint` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '只记录10M以上的大文件',
+  `file_path` varchar(600) DEFAULT NULL COMMENT '文件路径',
+  `hash` varchar(100) DEFAULT NULL COMMENT '文件hash',
+  `is_exist` tinyint(1) DEFAULT NULL COMMENT '文件是否还存在',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `file_fingerprint` */
 
 /*Table structure for table `mapping_group_user` */
 
@@ -62,6 +92,8 @@ CREATE TABLE `mapping_repo_user` (
 
 /*Data for the table `mapping_repo_user` */
 
+insert  into `mapping_repo_user`(`repo_id`,`user_id`,`access`,`add`,`del`,`mod`,`mapping_name`) values (7,1,1,1,1,1,'1');
+
 /*Table structure for table `mapping_role_api` */
 
 DROP TABLE IF EXISTS `mapping_role_api`;
@@ -90,8 +122,8 @@ DROP TABLE IF EXISTS `repos`;
 
 CREATE TABLE `repos` (
   `repo_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '仓库表',
-  `repo_name` varchar(60) DEFAULT NULL,
-  `repo_type` tinyint(4) DEFAULT NULL COMMENT '1-普通仓库，2-版本仓库，3-协作仓库',
+  `repo_name` varchar(60) NOT NULL,
+  `repo_type` tinyint(4) NOT NULL COMMENT '1-普通仓库，2-版本仓库，3-协作仓库',
   `repo_path` varchar(500) DEFAULT NULL COMMENT '仓库在服务器上的物理路径',
   `repo_des` varchar(500) DEFAULT NULL COMMENT '仓库简介',
   `repo_pwd` varchar(500) DEFAULT NULL COMMENT '仓库访问密码',
@@ -102,19 +134,21 @@ CREATE TABLE `repos` (
   `remote_uname` varchar(500) DEFAULT NULL COMMENT '远程仓库的用户名，仅type=3时有效',
   `remote_pwd` varchar(500) DEFAULT NULL COMMENT '远程仓库的密码，仅type=3时有效',
   PRIMARY KEY (`repo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*Data for the table `repos` */
+
+insert  into `repos`(`repo_id`,`repo_name`,`repo_type`,`repo_path`,`repo_des`,`repo_pwd`,`creater_id`,`creater`,`create_time`,`remote_addr`,`remote_uname`,`remote_pwd`) values (1,'r1',2,'D:/versionTest/Repository/1/','测试仓库1','123',1,'root','2020-09-01 14:43:45',NULL,NULL,NULL),(7,'r1',2,'D:/versionTest/Repository/7/','测试仓库1','123',2,'root','2020-09-01 19:49:01',NULL,NULL,NULL),(8,'r1',2,'D:/versionTest/Repository/8/','测试仓库1','123',1,'root','2020-09-01 19:56:49',NULL,NULL,NULL),(9,'r1',1,'D:/versionTest/Repository/9/','测试普通仓库1','',1,'root','2020-09-03 20:18:26',NULL,NULL,NULL),(10,'协作仓库',3,'D:/versionTest/Repository/10/','测试普通仓库1','',1,'root','2020-09-03 21:29:31',NULL,NULL,NULL),(11,'测试仓库1',3,'D:/versionTest/Repository/11/','测试创建仓库','123',1,'root','2020-09-04 10:25:11',NULL,NULL,NULL),(12,'仓库2',3,'D:/versionTest/Repository/12/','按城','',1,'root','2020-09-04 10:36:38',NULL,NULL,NULL);
 
 /*Table structure for table `repos_share` */
 
 DROP TABLE IF EXISTS `repos_share`;
 
 CREATE TABLE `repos_share` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '仓库分享表',
+  `share_id` bigint(20) NOT NULL COMMENT '仓库分享表',
   `repo_id` int(11) DEFAULT NULL COMMENT '仓库id',
   `repo_pwd` varchar(60) DEFAULT NULL COMMENT '仓库密码',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`share_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `repos_share` */
@@ -157,17 +191,17 @@ CREATE TABLE `user` (
   `alias` varchar(60) NOT NULL COMMENT '昵称',
   `tel` varchar(60) NOT NULL COMMENT '电话',
   `email` varchar(60) NOT NULL COMMENT '邮箱',
-  `last_login_time` datetime NOT NULL COMMENT '最后登陆时间',
-  `last_login_ip` varchar(60) NOT NULL COMMENT '最后登陆ip',
+  `last_login_time` datetime DEFAULT NULL COMMENT '最后登陆时间',
+  `last_login_ip` varchar(60) DEFAULT NULL COMMENT '最后登陆ip',
   `creater` varchar(60) NOT NULL COMMENT '创建人',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `role_id` int(11) DEFAULT NULL COMMENT '角色id',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user` */
 
-insert  into `user`(`user_id`,`username`,`password`,`alias`,`tel`,`email`,`last_login_time`,`last_login_ip`,`creater`,`create_time`,`role_id`) values (1,'root','1','','','','2020-08-24 11:54:40','192.168.10.143','hcy','2020-08-24 11:54:51',NULL);
+insert  into `user`(`user_id`,`username`,`password`,`alias`,`tel`,`email`,`last_login_time`,`last_login_ip`,`creater`,`create_time`,`role_id`) values (1,'root','3.14','root','','','2020-08-24 11:54:40','192.168.10.143','hcy','2020-08-24 11:54:51',1),(2,'hcy','3.14','何重洋','10086','3@q.com',NULL,NULL,'root','2020-09-01 14:17:41',1);
 
 /*Table structure for table `user_group` */
 

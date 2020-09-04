@@ -1,7 +1,7 @@
 package com.vesystem.version.module.service.impl;
 
 import com.vesystem.version.module.entity.SysApi;
-import com.vesystem.version.module.dao.SysApiMapper;
+import com.vesystem.version.module.mapper.SysApiMapper;
 import com.vesystem.version.module.service.ISysApiService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

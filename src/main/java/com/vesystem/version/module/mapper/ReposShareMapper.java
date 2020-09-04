@@ -1,4 +1,4 @@
-package com.vesystem.version.module.dao;
+package com.vesystem.version.module.mapper;
 
 import com.vesystem.version.module.entity.ReposShare;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
