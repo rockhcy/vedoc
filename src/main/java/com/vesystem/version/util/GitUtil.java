@@ -4,6 +4,7 @@ import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.vesystem.version.module.dto.DocHistory;
 import com.vesystem.version.module.dto.ReposDto;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -15,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -132,12 +130,11 @@ public class GitUtil {
      * @param version 版本号
      * @param dirPath 仓库物理路径
      * @param entryPath 仓库中的具体文件名称，注意：当前版本只支持下载单个文件的历史版本。后期可以考虑做文件夹的整体版本回退
-     * @param copyFilePath 将历史版本写入到哪个文件夹下
+     * @param out 历史版本需要输出的位置
      * @throws IOException 统一返回：获取历史版本文件时发生错误
      */
-    public static void getHistoryVersionFile(String version, String dirPath,String entryPath,String copyFilePath) throws IOException{
+    public static void getHistoryVersionFile(String version, String dirPath,String entryPath, OutputStream out) throws IOException{
         Git  git = Git.open(new File(dirPath));
-        FileOutputStream out = new FileOutputStream(copyFilePath);
         // Repository 包括所有的对象和引用，用来管理源码
         Repository repository = git.getRepository();
         ObjectId objectId = repository.resolve(version);
@@ -161,6 +158,20 @@ public class GitUtil {
         repository.close();
     }
 
+    /**
+     * 恢复文件到指定的历史版本，恢复后会立刻执行一次提交。
+     * @param dirPath
+     * @param entryPath
+     * @param version
+     * @throws IOException
+     * @throws GitAPIException
+     */
+    public static void rollBackFileRevision(String dirPath,String entryPath,String version) throws IOException, GitAPIException {
+        FileOutputStream fileOutputStream = new FileOutputStream(dirPath + entryPath);
+        getHistoryVersionFile(version,dirPath,entryPath,fileOutputStream);
+        gitAddFile(entryPath,dirPath);
+        gitCommit(dirPath,"恢复文件："+entryPath+"到"+version+"版本");
+    }
     /**
      * 单文件版本回退
      * 本质就是将单个文件的历史版本写入当前工作区，然后再提交。这样这一次的版本回退也会称为一个版本节点。

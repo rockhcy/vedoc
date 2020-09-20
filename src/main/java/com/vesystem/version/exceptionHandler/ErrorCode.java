@@ -26,6 +26,8 @@ public enum ErrorCode {
     INVALID_PATH(1014, HttpStatus.INSUFFICIENT_STORAGE, "不是一个有效的root路径"),
     FILE_LOCKING(1015, HttpStatus.INSUFFICIENT_STORAGE, "文件锁定中，请稍后再试"),
     PLEASE_USE_MULTIPART_UPLOAD(1016, HttpStatus.INSUFFICIENT_STORAGE, "请使用文件分片上传"),
+    UNKNOWN_ERROR(1017, HttpStatus.INSUFFICIENT_STORAGE, "未知错误，请联系开发人员"),
+    NOT_FOUND_FALLBACK_VERSION(1018, HttpStatus.INSUFFICIENT_STORAGE, "没有可供回退的版本"),
     ;
 
 

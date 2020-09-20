@@ -27,4 +27,5 @@ logging:
 gitRootPath: D:/versionTest/ #系统根路径
 deleteFolderWhenDeleteRepo: true #删除仓库时是否要同步删除用户文件，false为不删除，由服务器管理员自己去做物理删除
 openFileSecondPass: true # 是否开启文件秒传，true开启
+maxHistoryRollbackSize: 10 # 允许查看和回退的最大历史版本记录数,ps:后期可以作为VIP和开源版的差异点
 

@@ -5,21 +5,20 @@ import cn.hutool.core.util.HashUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vesystem.version.constants.PathConstant;
 import com.vesystem.version.exceptionHandler.ErrorCode;
 import com.vesystem.version.exceptionHandler.ParameterInvalid;
-import com.vesystem.version.module.dto.MultipartParam;
+import com.vesystem.version.module.dto.*;
 import com.vesystem.version.module.entity.*;
 import com.vesystem.version.module.mapper.*;
-import com.vesystem.version.module.dto.DocDto;
-import com.vesystem.version.module.dto.ReposDto;
-import com.vesystem.version.module.dto.UserDto;
 import com.vesystem.version.module.service.IReposService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vesystem.version.util.CurrentUserUtils;
 import com.vesystem.version.util.GitUtil;
 import com.vesystem.version.util.JwtToken;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -67,10 +70,73 @@ public class ReposServiceImpl extends ServiceImpl<ReposMapper, Repos> implements
     private Boolean deleteFolderWhenDeleteRepo;
     @Value("${openFileSecondPass}")
     private Boolean openFileSecondPass;
+    @Value("${maxHistoryRollbackSize}")
+    private Integer maxHistoryRollbackSize;
 
 
 
 
+
+    public void downloadRevision(String dirPath, String entryPath, String version, HttpServletResponse response){
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+
+        File file = new File( dirPath + entryPath );
+        if ( !file.exists() ){
+            throw new ParameterInvalid(ErrorCode.PATH_NOT_EXIST);
+        }
+        try {
+
+            // 下面两句设置后axois才能顺利从响应头中获取到文件名，浏览器默认只能获取到响应头中的Content-Type等2个属性，其他的都要单独添加
+            response.addHeader("filename",URLEncoder.encode(file.getName(),"UTF-8"));
+            response.addHeader("Access-Control-Expose-Headers","filename");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new ParameterInvalid(ErrorCode.JAVA_SERVICE_NOT_SUPPORT_UTF_8);
+        }
+        ServletOutputStream out = null;
+        try {
+            out = response.getOutputStream();
+            GitUtil.getHistoryVersionFile(version,dirPath,entryPath,out);
+        } catch (IOException e) {
+            e.printStackTrace();
+            if ( out !=null ){
+                try {
+                    out.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            throw new ParameterInvalid(ErrorCode.UNKNOWN_ERROR);
+        }
+    }
+
+    public void rollBackRevisionByVersionId(String dirPath,String entryPath,String version){
+        try {
+            GitUtil.rollBackFileRevision(dirPath,entryPath,version);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ParameterInvalid(ErrorCode.PATH_NOT_EXIST);
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+            throw new ParameterInvalid(ErrorCode.UNKNOWN_ERROR);
+        }
+    }
+
+    public void rollBackRevisionToPreviousVersion(String dirPath,String entryPath){
+        try {
+            List<DocHistory> list = GitUtil.getHistoryLogs(dirPath,entryPath,2);
+            if ( list.size() <2 ){
+                throw new ParameterInvalid(ErrorCode.NOT_FOUND_FALLBACK_VERSION);
+            }
+            rollBackRevisionByVersionId(dirPath,entryPath,list.get(1).getObjectId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 
@@ -323,6 +389,31 @@ public class ReposServiceImpl extends ServiceImpl<ReposMapper, Repos> implements
         }
         delFileLock(JwtToken.getUsernameByRequest(request),filePath);
         return j;
+    }
+
+    public void deleteFile(HttpServletRequest request,String filePath){
+        filePath = PathConstant.tranformPathWhenOSIsWindows(filePath);
+        if ( !FileUtil.exist(filePath) ){
+            throw new ParameterInvalid(ErrorCode.PATH_NOT_EXIST);
+        }
+        String username = JwtToken.getUsernameByRequest(request);
+        checkFileLock(filePath);
+        // 可以删除文件，也能删除文件夹,这里统一加文件夹锁
+        addFileLock(username,DocLock.TYPE_FOLDER,filePath);
+        FileUtil.del(filePath);
+        delFileLock(username,filePath);
+    }
+
+    public List<DocHistory> getDocHistoryList(String repoPath,String path){
+        try {
+            return GitUtil.getHistoryLogs(repoPath,path.replaceAll(repoPath,""),maxHistoryRollbackSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ParameterInvalid(ErrorCode.PATH_NOT_EXIST);
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+            throw new ParameterInvalid(ErrorCode.UNKNOWN_ERROR);
+        }
     }
 
     /**
