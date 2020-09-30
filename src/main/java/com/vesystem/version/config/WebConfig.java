@@ -1,6 +1,7 @@
 package com.vesystem.version.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.config.annotation.*;
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private FrontInterceptor frontInterceptor;
+    @Value("${gitRootPath}")
+    private String gitRootPath;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(frontInterceptor).addPathPatterns("/**").
@@ -25,6 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("officeFile/**").addResourceLocations("file:"+gitRootPath);
 
     }
     @Override

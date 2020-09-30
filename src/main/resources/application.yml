@@ -29,3 +29,4 @@ deleteFolderWhenDeleteRepo: true #删除仓库时是否要同步删除用户文�
 openFileSecondPass: true # 是否开启文件秒传，true开启
 maxHistoryRollbackSize: 10 # 允许查看和回退的最大历史版本记录数,ps:后期可以作为VIP和开源版的差异点
 
+

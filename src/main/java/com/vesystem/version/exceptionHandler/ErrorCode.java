@@ -28,6 +28,8 @@ public enum ErrorCode {
     PLEASE_USE_MULTIPART_UPLOAD(1016, HttpStatus.INSUFFICIENT_STORAGE, "请使用文件分片上传"),
     UNKNOWN_ERROR(1017, HttpStatus.INSUFFICIENT_STORAGE, "未知错误，请联系开发人员"),
     NOT_FOUND_FALLBACK_VERSION(1018, HttpStatus.INSUFFICIENT_STORAGE, "没有可供回退的版本"),
+    FILE_EXIST_BECAUSE_REPOS_IS_COMMON(1019, HttpStatus.INSUFFICIENT_STORAGE, "普通仓库不允许上传同名文件"),
+
     ;
 
 

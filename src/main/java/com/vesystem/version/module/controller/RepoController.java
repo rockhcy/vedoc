@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @auther hcy
@@ -25,6 +26,26 @@ import java.util.List;
 public class RepoController {
     @Autowired
     private ReposServiceImpl reposService;
+
+
+    @PostMapping("checkRepoPassword")
+    public Boolean checkRepoPassword(String password,Integer repoId){
+        return reposService.checkRepoPassword(password,repoId);
+    }
+
+    @PostMapping("enterRepo")
+    public Boolean enterRepo(Integer repoId){
+        return reposService.enterRepo(repoId);
+    }
+    @PostMapping("createFolder")
+    public Boolean createFolder(String path,String folderName){
+        return reposService.createFolder(path,folderName);
+    }
+
+    @PostMapping("batchDownload")
+    public void batchDownload(HttpServletRequest request, HttpServletResponse response, @RequestBody List<String> list){
+        reposService.batchDownload(request,response,list);
+    }
 
     @RequestMapping("downloadRevision")
     public void downloadRevision(String dirPath, String entryPath, String version, HttpServletResponse response){
@@ -46,9 +67,9 @@ public class RepoController {
         return reposService.getDocHistoryList(repoPath,path);
     }
 
-    @DeleteMapping("deleteFile")
-    public void deleteFile(HttpServletRequest request,String filePath){
-        reposService.deleteFile(request,filePath);
+    @RequestMapping("deleteFile")
+    public void deleteFile(HttpServletRequest request,@RequestBody Map<String,List<String>> map){
+        reposService.deleteFile(request,map.get("files"));
     }
 
     @PostMapping("multipartUpload")
@@ -57,8 +78,8 @@ public class RepoController {
     }
 
     @PostMapping("smallFileUpload")
-    public void smallFileUpload(HttpServletRequest request,String savePath){
-        reposService.smallFileUpload(request,savePath);
+    public void smallFileUpload(HttpServletRequest request,String savePath,Integer repoId){
+        reposService.smallFileUpload(request,savePath,repoId);
     }
 
     @GetMapping("getFileList")
