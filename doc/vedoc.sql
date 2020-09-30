@@ -28,9 +28,11 @@ CREATE TABLE `doc_lock` (
   `locker` varchar(100) DEFAULT NULL COMMENT '加锁人',
   `lock_time` bigint(20) DEFAULT NULL COMMENT '锁定时间，当操过该时间后自动解锁',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 
 /*Data for the table `doc_lock` */
+
+insert  into `doc_lock`(`id`,`type`,`path`,`state`,`locker`,`lock_time`) values (7,1,'jdk-install.zip',1,'root',1601176884375),(8,1,'jdk-install.zip',1,'root',1601176949427),(13,1,'D:/versionTest/nacos-server-1.1.4.zip',1,'root',1601186296657),(92,1,'nullRelease.zip',1,'root',1601365548056);
 
 /*Table structure for table `doc_share` */
 
@@ -38,8 +40,8 @@ DROP TABLE IF EXISTS `doc_share`;
 
 CREATE TABLE `doc_share` (
   `share_id` bigint(20) NOT NULL COMMENT '雪花主键',
-  `share_name` varchar(60) DEFAULT NULL,
-  `repo_id` int(11) DEFAULT NULL,
+  `share_name` varchar(60) DEFAULT NULL COMMENT '分享的文件或目录名称',
+  `repo_id` int(11) DEFAULT NULL COMMENT '仓库id',
   `relative_path` varchar(500) DEFAULT NULL COMMENT '基于仓库的相对路径',
   `share_auth` varchar(200) DEFAULT NULL COMMENT '分享权限',
   `share_pwd` varchar(60) DEFAULT NULL COMMENT '分享密码',
@@ -60,9 +62,11 @@ CREATE TABLE `file_fingerprint` (
   `hash` varchar(100) DEFAULT NULL COMMENT '文件hash',
   `is_exist` tinyint(1) DEFAULT NULL COMMENT '文件是否还存在',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*Data for the table `file_fingerprint` */
+
+insert  into `file_fingerprint`(`id`,`file_path`,`hash`,`is_exist`) values (1,'D:/versionTest/jdk-install.zip','5dc129b19069ff2e6ca733b3f7cf4e61',1),(2,'D:/versionTest/jdk-install.zip','5dc129b19069ff2e6ca733b3f7cf4e61',1),(3,'nullRelease.zip','20de6b733f1ce1bdc629775e5d24610c',1),(4,'nullRelease.zip','20de6b733f1ce1bdc629775e5d24610c',1),(5,'nullRelease.zip','20de6b733f1ce1bdc629775e5d24610c',1),(6,'nullRelease.zip','20de6b733f1ce1bdc629775e5d24610c',1),(7,'D:/versionTest/Repository/9/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1),(8,'D:/versionTest/Repository/1/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1),(9,'D:/versionTest/Repository/1/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1),(10,'D:/versionTest/Repository/1/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1),(11,'D:/versionTest/Repository/1/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1),(12,'D:/versionTest/Repository/1/Release.zip','20de6b733f1ce1bdc629775e5d24610c',1);
 
 /*Table structure for table `mapping_group_user` */
 
@@ -134,11 +138,11 @@ CREATE TABLE `repos` (
   `remote_uname` varchar(500) DEFAULT NULL COMMENT '远程仓库的用户名，仅type=3时有效',
   `remote_pwd` varchar(500) DEFAULT NULL COMMENT '远程仓库的密码，仅type=3时有效',
   PRIMARY KEY (`repo_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 /*Data for the table `repos` */
 
-insert  into `repos`(`repo_id`,`repo_name`,`repo_type`,`repo_path`,`repo_des`,`repo_pwd`,`creater_id`,`creater`,`create_time`,`remote_addr`,`remote_uname`,`remote_pwd`) values (1,'r1',2,'D:/versionTest/Repository/1/','测试仓库1','123',1,'root','2020-09-01 14:43:45',NULL,NULL,NULL),(7,'r1',2,'D:/versionTest/Repository/7/','测试仓库1','123',2,'root','2020-09-01 19:49:01',NULL,NULL,NULL),(8,'r1',2,'D:/versionTest/Repository/8/','测试仓库1','123',1,'root','2020-09-01 19:56:49',NULL,NULL,NULL),(9,'r1',1,'D:/versionTest/Repository/9/','测试普通仓库1','',1,'root','2020-09-03 20:18:26',NULL,NULL,NULL),(10,'协作仓库',3,'D:/versionTest/Repository/10/','测试普通仓库1','',1,'root','2020-09-03 21:29:31',NULL,NULL,NULL),(11,'测试仓库1',3,'D:/versionTest/Repository/11/','测试创建仓库','123',1,'root','2020-09-04 10:25:11',NULL,NULL,NULL),(12,'仓库2',3,'D:/versionTest/Repository/12/','按城','',1,'root','2020-09-04 10:36:38',NULL,NULL,NULL);
+insert  into `repos`(`repo_id`,`repo_name`,`repo_type`,`repo_path`,`repo_des`,`repo_pwd`,`creater_id`,`creater`,`create_time`,`remote_addr`,`remote_uname`,`remote_pwd`) values (1,'r1',2,'D:/versionTest/Repository/1/','测试仓库1','123',1,'root','2020-09-01 14:43:45',NULL,NULL,NULL),(7,'r1',2,'D:/versionTest/Repository/7/','测试仓库1','123',2,'root','2020-09-01 19:49:01',NULL,NULL,NULL),(8,'r1',2,'D:/versionTest/Repository/8/','测试仓库1','123',1,'root','2020-09-01 19:56:49',NULL,NULL,NULL),(9,'r1',1,'D:/versionTest/Repository/9/','测试普通仓库1','',1,'root','2020-09-03 20:18:26',NULL,NULL,NULL),(10,'协作仓库',3,'D:/versionTest/Repository/10/','测试普通仓库1','',1,'root','2020-09-03 21:29:31',NULL,NULL,NULL),(11,'测试仓库1',3,'D:/versionTest/Repository/11/','测试创建仓库','123',1,'root','2020-09-04 10:25:11',NULL,NULL,NULL),(12,'仓库2',3,'D:/versionTest/Repository/12/','按城','',1,'root','2020-09-04 10:36:38',NULL,NULL,NULL),(13,'929',2,'D:/versionTest/Repository/13/','0929创建的测试仓库','123456',1,'root','2020-09-29 17:19:11',NULL,NULL,NULL);
 
 /*Table structure for table `repos_share` */
 
