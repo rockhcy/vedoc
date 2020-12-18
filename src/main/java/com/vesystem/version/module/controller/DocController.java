@@ -1,5 +1,6 @@
 package com.vesystem.version.module.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vesystem.version.module.dto.DocShareDto;
 import com.vesystem.version.module.entity.DocShare;
@@ -27,18 +28,18 @@ public class DocController {
     }
 
     @PostMapping("docShare")
-    public void docShare(DocShareDto shareDto){
-        docShareService.docShare(shareDto);
-    }
-
-    @PutMapping("updateDocShareInfo")
-    public void updateDocShareInfo(DocShareDto shareDto){
-        docShareService.updateDocShareInfo(shareDto);
+    public void docShare(HttpServletRequest request,@RequestBody DocShareDto shareDto){
+        docShareService.docShare(request,shareDto);
     }
 
     @GetMapping("selectSelfAllDocShareList")
-    public Page<DocShare> selectSelfAllDocShareList(HttpServletRequest request, Page<DocShare> page, String shareName){
-        return docShareService.selectSelfAllDocShareList(request,page,shareName);
+    public IPage<DocShareDto> selectSelfAllDocShareList(HttpServletRequest request, Page<DocShareDto> page){
+        return docShareService.selectSelfAllDocShareList(request,page);
+    }
+
+    @PutMapping("updateDocShareInfo")
+    public void updateDocShareInfo(@RequestBody DocShareDto shareDto){
+        docShareService.updateDocShareInfo(shareDto);
     }
 
     @DeleteMapping("deleteDocShareById")

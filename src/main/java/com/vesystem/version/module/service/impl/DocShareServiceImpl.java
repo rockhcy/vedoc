@@ -2,6 +2,7 @@ package com.vesystem.version.module.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vesystem.version.enums.ReposTypeEnums;
 import com.vesystem.version.exceptionHandler.ErrorCode;
@@ -44,12 +45,13 @@ public class DocShareServiceImpl extends ServiceImpl<DocShareMapper, DocShare> i
         return OtherUtils.getSnowflakePrimaryKey();
     }
 
-    public void docShare(DocShareDto shareDto){
+    public void docShare(HttpServletRequest request,DocShareDto shareDto){
         Repos repos = reposMapper.selectById(shareDto.getRepoId());
         if ( repos == null ){
             throw new ParameterInvalid(ErrorCode.METHOD_ARGUMENT_NOT_VALID);
         }
         shareDto.setExpireTime( new Date( shareDto.getExpireTimeLong() *1000L ));
+        shareDto.setUserId(JwtToken.getUserIdByRequest(request));
         docShareMapper.insert( shareDto );
     }
 
@@ -59,17 +61,17 @@ public class DocShareServiceImpl extends ServiceImpl<DocShareMapper, DocShare> i
             throw new ParameterInvalid(ErrorCode.METHOD_ARGUMENT_NOT_VALID);
         }
         // 只允许更新 权限、密码和有效期
-        db.setExpireTime(new Date( shareDto.getExpireTimeLong() ));
+        db.setExpireTime(new Date( shareDto.getExpireTimeLong() * 1000L ));
         db.setShareAuth( shareDto.getShareAuth() );
         db.setSharePwd( shareDto.getSharePwd() );
         docShareMapper.updateById(db);
     }
 
-    public Page<DocShare> selectSelfAllDocShareList(HttpServletRequest request,Page<DocShare> page, String shareName){
+    public IPage<DocShareDto> selectSelfAllDocShareList(HttpServletRequest request, Page<DocShareDto> page){
         Integer userId = JwtToken.getUserIdByRequest(request);
-        QueryWrapper<DocShare> qw =new QueryWrapper<>();
-        qw.eq("user_id",userId).like("share_name",shareName);
-        return docShareMapper.selectPage(page,qw);
+        List<DocShareDto>list = docShareMapper.selectDocShareListByUserId(page,userId);
+        page.setRecords( list );
+        return page;
     }
 
     public void deleteDocShareById(Long shareId){

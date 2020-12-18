@@ -2,6 +2,8 @@ package com.vesystem.version.module.controller;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vesystem.version.module.dto.DocHistory;
 import com.vesystem.version.module.dto.MultipartParam;
 import com.vesystem.version.module.dto.ReposDto;
@@ -27,6 +29,11 @@ public class RepoController {
     @Autowired
     private ReposServiceImpl reposService;
 
+
+    @GetMapping("getSelfRepoAdminList")
+    public IPage<ReposDto> getSelfRepoAdminList(HttpServletRequest request, Page<ReposDto> page){
+        return reposService.getSelfRepoAdminList(request,page);
+    }
 
     @PostMapping("checkRepoPassword")
     public Boolean checkRepoPassword(String password,Integer repoId){
@@ -102,23 +109,28 @@ public class RepoController {
     public void deleteSelfRepo(HttpServletRequest request,Integer repoId){
         reposService.deleteSelfRepo(request,repoId);
     }
-
-    @GetMapping("getSelfRepoList")
-    public List<Repos> getSelfRepoList(HttpServletRequest request){
-        return reposService.getSelfRepoList(request);
-    }
-
-    @PostMapping("addMappingRepo")
-    public void addMappingRepo(HttpServletRequest request,Integer shareId,String password){
-        reposService.addMappingRepo(request,shareId,password);
-    }
-
     @DeleteMapping("deleteMappingRepo")
     public void deleteMappingRepo(HttpServletRequest request,Integer repoId){
         reposService.deleteMappingRepo(request,repoId);
     }
 
+
+    @GetMapping("getSelfRepoList")
+    @Deprecated//完全想不起来这是要做什么，放弃这套逻辑重写一套
+    public List<Repos> getSelfRepoList(HttpServletRequest request){
+        return reposService.getSelfRepoList(request);
+    }
+
+    @PostMapping("addMappingRepo")
+    @Deprecated//完全想不起来这是要做什么，放弃这套逻辑重写一套
+    public void addMappingRepo(HttpServletRequest request,Integer shareId,String password){
+        reposService.addMappingRepo(request,shareId,password);
+    }
+
+
+
     @GetMapping("getMappingRepoList")
+    @Deprecated//完全想不起来这是要做什么，放弃这套逻辑重写一套
     public List<MappingRepoUser> getMappingRepoList(HttpServletRequest request){
         return reposService.getMappingRepoList(request);
     }

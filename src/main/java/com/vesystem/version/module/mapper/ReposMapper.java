@@ -1,5 +1,6 @@
 package com.vesystem.version.module.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vesystem.version.module.dto.ReposDto;
 import com.vesystem.version.module.entity.Repos;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -31,5 +32,9 @@ public interface ReposMapper extends BaseMapper<Repos> {
             "SELECT * FROM `mapping_repo_user` WHERE user_id = #{userId}) " +
             "a JOIN `repos` ON a.repo_id =  repos.`repo_id` ")
     List<ReposDto> selectMapppingReposListByUserId(Integer userId);
+
+    @Select(" SELECT * FROM `repos` WHERE repo_id IN ( " +
+            "SELECT repo_id FROM `mapping_repo_user` WHERE user_id = #{userId}) OR  creater_id = #{userId} ")
+    List<ReposDto> selectRepoListByUserId(Page<ReposDto> page,Integer userId);
 
 }

@@ -1,13 +1,11 @@
 package com.vesystem.version.config;
 
-import com.github.pagehelper.PageHelper;
-import org.apache.ibatis.plugin.Interceptor;
-import org.mybatis.spring.SqlSessionFactoryBean;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Properties;
 
 /**
  * @auther hcy
@@ -19,17 +17,14 @@ import java.util.Properties;
 public class MyBatisConfig {
 
     @Bean
-    PageHelper pageHelper(){
-        //分页插件
-        PageHelper pageHelper = new PageHelper();
-        Properties properties = new Properties();
-        properties.setProperty("reasonable", "true");
-        properties.setProperty("supportMethodsArguments", "true");
-        properties.setProperty("returnPageInfo", "check");
-        properties.setProperty("params", "count=countSql");
-        pageHelper.setProperties(properties);
-        //添加插件
-        new SqlSessionFactoryBean().setPlugins(new Interceptor[]{pageHelper});
-        return pageHelper;
+    public PaginationInterceptor paginationInterceptor() {
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        // 设置请求的页面大于最大页后操作， true调回到首页，false 继续请求  默认false
+        // paginationInterceptor.setOverflow(false);
+        // 设置最大单页限制数量，默认 500 条，-1 不受限制
+        // paginationInterceptor.setLimit(500);
+        // 开启 count 的 join 优化,只针对部分 left join
+        paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
+        return paginationInterceptor;
     }
 }

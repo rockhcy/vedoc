@@ -15,5 +15,9 @@ public class DocShareDto extends DocShare {
      * 有效期 秒数
      */
     private Long expireTimeLong;
+    /**
+     * 仓库名称
+     */
+    private String repoName;
 
 }

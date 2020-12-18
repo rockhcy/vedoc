@@ -11,6 +11,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vesystem.version.constants.PathConstant;
 import com.vesystem.version.enums.ReposTypeEnums;
 import com.vesystem.version.exceptionHandler.ErrorCode;
@@ -88,6 +90,16 @@ public class ReposServiceImpl extends ServiceImpl<ReposMapper, Repos> implements
 
 
 
+
+    public IPage<ReposDto> getSelfRepoAdminList(HttpServletRequest request, Page<ReposDto> page){
+        Integer userId = JwtToken.getUserIdByRequest(request);
+        List<ReposDto> list = reposMapper.selectRepoListByUserId(page,userId);
+        list.forEach( r ->{
+            r.setIsSelfCreate( Objects.equals(r.getCreaterId(),userId) );
+        } );
+        page.setRecords( list );
+        return page;
+    }
 
     public Boolean enterRepo(Integer repoId){
         Repos repos = reposMapper.selectById(repoId);
