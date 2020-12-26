@@ -1,5 +1,5 @@
 server:
-  port: 9999
+  port: 9998
 spring:
   profiles:
     active: dev
@@ -18,9 +18,9 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss #自动将modelAndview中的data数据转换为字符串传递给前端
     time-zone: GMT+8
-mybatis:
-  config-location: classpath:mybatis/mybatis-config.xml
-  mapper-locations: classpath:mybatis/mappers/*Mapper.xml
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   config: classpath:config/logback-spring.xml
 
@@ -28,4 +28,5 @@ gitRootPath: D:/versionTest/ #系统根路径
 deleteFolderWhenDeleteRepo: true #删除仓库时是否要同步删除用户文件，false为不删除，由服务器管理员自己去做物理删除
 openFileSecondPass: true # 是否开启文件秒传，true开启
 maxHistoryRollbackSize: 10 # 允许查看和回退的最大历史版本记录数,ps:后期可以作为VIP和开源版的差异点
+
 

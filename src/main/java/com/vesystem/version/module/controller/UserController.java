@@ -2,6 +2,7 @@ package com.vesystem.version.module.controller;
 
 import cn.hutool.json.JSONObject;
 import com.vesystem.version.module.dto.UserDto;
+import com.vesystem.version.module.entity.User;
 import com.vesystem.version.module.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,21 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     @Autowired
     private UserServiceImpl userService;
+
+    @PutMapping("updateUserSelfPassword")
+    public void updateUserSelfPassword(HttpServletRequest request,String newPwd,String oldPwd){
+        userService.updateUserSelfPassword(request,newPwd,oldPwd);
+    }
+
+    @PutMapping("updateUserBaseInfo")
+    public void updateUserBaseInfo(@RequestBody UserDto userDto){
+        userService.updateUserBaseInfo(userDto);
+    }
+
+    @GetMapping("getSelfUserInfo")
+    public User getSelfUserInfo(HttpServletRequest request){
+        return userService.getSelfUserInfo(request);
+    }
 
     @PostMapping("addUser")
     public void addUser(HttpServletRequest request,@RequestBody UserDto userDto){

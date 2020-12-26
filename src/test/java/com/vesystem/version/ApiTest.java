@@ -1,8 +1,5 @@
 package com.vesystem.version;
 
-import cn.hutool.core.io.FileUtil;
-import com.vesystem.version.module.dto.DocHistory;
-import com.vesystem.version.util.GitUtil;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -12,15 +9,23 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @auther hcy
@@ -30,13 +35,50 @@ import java.util.Properties;
 public class ApiTest {
 
     public static void main(String[] args) throws IOException, GitAPIException {
-        String dirPath = "D:/versionTest/Repository/1/";
-       // GitUtil.gitAddFile(".",dirPath);
-//        GitUtil.gitCommit( dirPath,"" );
-//        GitUtil.getHistoryLogs(dirPath);
-//        GitUtil.rollBackFileRevision(dirPath,"test.txt","fe01ddc03c24dfe2a823ab4cca5f11dd0ec6fba7");
-        test(dirPath,"test.txt","fe01ddc03c24dfe2a823ab4cca5f11dd0ec6fba7");
-//        System.out.println( GitUtil.getHistoryLogs(dirPath,"test.txt",10) );
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        try {
+            builder = documentBuilderFactory.newDocumentBuilder();
+            Document document = builder.newDocument();
+            Element root = document.createElement("language");
+            root.setAttribute("cat", "it");
+            Element lan1 = document.createElement("lan");
+            lan1.setAttribute("id" , "1");
+            Element name1 = document.createElement("name");
+            name1.setTextContent("java");
+            Element ide1 = document.createElement("ide");
+            ide1.setTextContent("myeclipse");
+
+            lan1.appendChild(name1);
+            lan1.appendChild(ide1);
+            root.appendChild(lan1);
+
+            document.appendChild(root);
+
+            //创建转换工厂，然后将创建的document转换输出到文件中或控制台
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.transform(new DOMSource(document), new StreamResult(new File("newXml.xml")));
+            StringWriter stringWriter = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
+            System.out.println(stringWriter.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<String> getDayStr(Date startDay,Date endDay,String sdfStr){
+        List<String> list = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat(sdfStr);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDay);
+        do {
+            list.add( sdf.format(calendar.getTime()) );
+            calendar.add(Calendar.DAY_OF_YEAR,1);
+        }while (calendar.getTime().before( endDay ));
+        return list;
     }
 
     public static void test(String dirPath,String entryPath,String version) throws IOException {

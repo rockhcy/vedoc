@@ -2,6 +2,8 @@ package com.vesystem.version.module.entity;
 
 import java.util.Date;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,6 +24,7 @@ public class DocShare implements Serializable {
     /**
      * 雪花主键
      */
+    @TableId
     private Long shareId;
 
     private String shareName;
@@ -36,7 +39,7 @@ public class DocShare implements Serializable {
     /**
      * 分享权限
      */
-    private String shareAuth;
+    private Integer shareAuth;
 
     /**
      * 分享密码

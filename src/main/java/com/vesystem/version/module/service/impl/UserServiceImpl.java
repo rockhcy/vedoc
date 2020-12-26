@@ -38,6 +38,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private CurrentUserUtils currentUserUtils;
 
+
+    public void updateUserSelfPassword(HttpServletRequest request,String newPwd,String oldPwd){
+        User dbUser= userMapper.selectById(JwtToken.getUserIdByRequest(request));
+        if (! Objects.equals( dbUser.getPassword(),oldPwd ) ){
+            throw new ParameterInvalid(ErrorCode.OLD_PASSWORD_ERROR);
+        }
+        dbUser.setPassword( newPwd );
+        userMapper.updateById(dbUser);
+    }
+
+    public void updateUserBaseInfo(UserDto userDto){
+        User dbUser= userMapper.selectById(userDto.getUserId());
+        dbUser.setAlias( userDto.getAlias() );
+        dbUser.setTel( userDto.getTel() );
+        dbUser.setEmail( userDto.getEmail() );
+        userMapper.updateById(dbUser);
+    }
+
+    public User getSelfUserInfo(HttpServletRequest request){
+        return userMapper.selectById( JwtToken.getUserIdByRequest(request) );
+    }
+
     public void addUser(HttpServletRequest request,UserDto userDto){
         QueryWrapper<User> qw = new QueryWrapper<>();
         qw.eq("username",userDto.getUsername());

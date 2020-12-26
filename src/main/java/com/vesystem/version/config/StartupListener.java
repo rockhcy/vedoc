@@ -1,12 +1,16 @@
 package com.vesystem.version.config;
 
 import com.vesystem.version.constants.PathConstant;
+import com.vesystem.version.module.dto.ReposDto;
+import com.vesystem.version.module.entity.Repos;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @auther hcy
